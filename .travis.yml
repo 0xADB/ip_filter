@@ -1,7 +1,9 @@
 language: cpp
 before_script:
+  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
   - sudo apt-get update
-  - sudo apt-get -y install libboost-test-dev
+  - sudo apt-get -y install gcc-5 g++-5 libboost-test-dev
+  - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 1
 script:
   - cmake .
   - cmake --build . --target test_ip_filter -- VERBOSE=1
