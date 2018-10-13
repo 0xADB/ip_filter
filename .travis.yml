@@ -4,6 +4,7 @@ before_script:
   - sudo apt-get update
   - sudo apt-get -y install gcc-5 g++-5 libboost-test-dev
   - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 1
+  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 1
 script:
   - cmake .
   - cmake --build . --target test_ip_filter -- VERBOSE=1
