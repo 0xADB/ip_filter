@@ -4,16 +4,17 @@
 #include <vector>
 #include <iostream>
 #include <algorithm>
-#include <tuple>
+#include <stdint.h>
 
 namespace ipv4
 {
 
-  using byte_t = std::string;
+  using byte_t = uint8_t;
   using addr_t = std::vector<byte_t>;
   using pool_t = std::vector<addr_t>;
 
   std::vector<std::string> split(const std::string &str, char d);
+  addr_t to_addr(const std::vector<std::string> &str);
 
   void print(std::ostream&, const pool_t&);
   void print(std::ostream& stream, const addr_t& ip_addr);
@@ -29,7 +30,7 @@ namespace ipv4
   template<size_t N, typename... Args>
   bool bytesPredicate(const addr_t& addr, int byte, Args... args)
   {
-    return (addr.at(N) == std::to_string(byte) && bytesPredicate<N+1>(addr, args...));
+    return ((addr.at(N) == byte) && bytesPredicate<N+1>(addr, args...));
   }
 
   pool_t filter_any(const pool_t& ip_pool, int byte);

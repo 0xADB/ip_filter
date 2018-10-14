@@ -80,7 +80,7 @@ BOOST_AUTO_TEST_SUITE(test_suite_main)
       auto ip_pool = ipv4::pool_t();
 
       for(std::string line; std::getline(data, line);)
-	ip_pool.emplace_back(ipv4::split(ipv4::split(line, '\t').at(0), '.'));
+	ip_pool.emplace_back(ipv4::to_addr(ipv4::split(ipv4::split(line, '\t').at(0), '.')));
 
       ipv4::sort(ip_pool);
 
@@ -95,17 +95,17 @@ BOOST_AUTO_TEST_SUITE(test_suite_main)
       // 1.1.234.8
 
       auto correct_head = ipv4::pool_t({
-	    {"222"s,"173"s,"235"s,"246"s}
-	  , {"222"s,"130"s,"177"s,"64"s }
-	  , {"222"s,"82"s ,"198"s,"61"s }
+	    {222,173,235,246}
+	  , {222,130,177,64 }
+	  , {222,82 ,198,61 }
 	  });
 
       auto correct_tail = ipv4::pool_t({
-	    {"1"s,"231"s,"69"s ,"33"s }
-	  , {"1"s,"87"s ,"203"s,"225"s}
-	  , {"1"s,"70"s ,"44"s,"170"s}
-	  , {"1"s,"29"s ,"168"s,"152"s}
-	  , {"1"s,"1"s  ,"234"s,"8"s  }
+	    {1,231,69 ,33 }
+	  , {1,87 ,203,225}
+	  , {1,70 ,44,170}
+	  , {1,29 ,168,152}
+	  , {1,1  ,234,8  }
 	  });
 
       BOOST_CHECK(std::equal(std::begin(correct_head), std::end(correct_head), std::begin(ip_pool)));
@@ -114,7 +114,7 @@ BOOST_AUTO_TEST_SUITE(test_suite_main)
       auto addrIt = std::find_if(
 	  std::begin(ip_pool)
 	  , endIt
-	  , [byte_str = ipv4::byte_t("1")](const ipv4::addr_t& addr) {return (addr.front() == byte_str);}
+	  , [byte = 1](const ipv4::addr_t& addr) {return (addr.front() == byte);}
 	  );
       BOOST_CHECK(addrIt != endIt);
       BOOST_CHECK(std::equal(std::begin(correct_tail), std::end(correct_tail), addrIt, endIt));
@@ -133,7 +133,7 @@ BOOST_AUTO_TEST_SUITE(test_suite_main)
     auto ip_pool = ipv4::pool_t();
 
     for(std::string line; std::getline(data, line);)
-      ip_pool.emplace_back(ipv4::split(ipv4::split(line, '\t').at(0), '.'));
+      ip_pool.emplace_back(ipv4::to_addr(ipv4::split(ipv4::split(line, '\t').at(0), '.')));
 
     ipv4::sort(ip_pool);
     auto filtered_pool = ipv4::filter(ip_pool, 1);
@@ -145,11 +145,11 @@ BOOST_AUTO_TEST_SUITE(test_suite_main)
     // 1.1.234.8
  
     auto correct_pool = ipv4::pool_t({
-	  {"1"s,"231"s,"69"s ,"33"s }
-	, {"1"s,"87"s ,"203"s,"225"s}
-	, {"1"s,"70"s ,"44"s,"170"s }
-	, {"1"s,"29"s ,"168"s,"152"s}
-	, {"1"s,"1"s  ,"234"s,"8"s  }
+	  {1,231,69 ,33 }
+	, {1,87 ,203,225}
+	, {1,70 ,44,170 }
+	, {1,29 ,168,152}
+	, {1,1  ,234,8  }
 	});
 
     BOOST_CHECK(correct_pool == filtered_pool);
@@ -163,7 +163,7 @@ BOOST_AUTO_TEST_SUITE(test_suite_main)
     auto ip_pool = ipv4::pool_t();
 
     for(std::string line; std::getline(data, line);)
-      ip_pool.emplace_back(ipv4::split(ipv4::split(line, '\t').at(0), '.'));
+      ip_pool.emplace_back(ipv4::to_addr(ipv4::split(ipv4::split(line, '\t').at(0), '.')));
 
     ipv4::sort(ip_pool);
     auto filtered_pool = ipv4::filter(ip_pool, 46, 70);
@@ -174,10 +174,10 @@ BOOST_AUTO_TEST_SUITE(test_suite_main)
     // 46.70.29.76
 
     auto correct_pool = ipv4::pool_t({
-	  {"46"s ,"70"s ,"225"s,"39"s}
-	, {"46"s ,"70"s ,"147"s,"26"s}
-	, {"46"s ,"70"s ,"113"s,"73"s}
-	, {"46"s ,"70"s ,"29"s ,"76"s}
+	  {46 ,70 ,225,39}
+	, {46 ,70 ,147,26}
+	, {46 ,70 ,113,73}
+	, {46 ,70 ,29 ,76}
 	});
 
     BOOST_CHECK(correct_pool == filtered_pool);
@@ -191,46 +191,46 @@ BOOST_AUTO_TEST_SUITE(test_suite_main)
     auto ip_pool = ipv4::pool_t();
 
     for(std::string line; std::getline(data, line);)
-      ip_pool.emplace_back(ipv4::split(ipv4::split(line, '\t').at(0), '.'));
+      ip_pool.emplace_back(ipv4::to_addr(ipv4::split(ipv4::split(line, '\t').at(0), '.')));
 
     ipv4::sort(ip_pool);
     auto filtered_pool = ipv4::filter_any(ip_pool, 46);
 
     auto correct_pool = ipv4::pool_t({
-	  {"186"s,"204"s,"34"s ,"46"s }
-	, {"186"s,"46"s ,"222"s,"194"s}
-	, {"185"s,"46"s ,"87"s ,"231"s}
-	, {"185"s,"46"s ,"86"s ,"132"s}
-	, {"185"s,"46"s ,"86"s ,"131"s}
-	, {"185"s,"46"s ,"86"s ,"131"s}
-	, {"185"s,"46"s ,"86"s ,"22"s }
-	, {"185"s,"46"s ,"85"s ,"204"s}
-	, {"185"s,"46"s ,"85"s ,"78"s }
-	, {"68"s ,"46"s ,"218"s,"208"s}
-	, {"46"s ,"251"s,"197"s,"23"s }
-	, {"46"s ,"223"s,"254"s,"56"s }
-	, {"46"s ,"223"s,"254"s,"56"s }
-	, {"46"s ,"182"s,"19"s ,"219"s}
-	, {"46"s ,"161"s,"63"s ,"66"s }
-	, {"46"s ,"161"s,"61"s ,"51"s }
-	, {"46"s ,"161"s,"60"s ,"92"s }
-	, {"46"s ,"161"s,"60"s ,"35"s }
-	, {"46"s ,"161"s,"58"s ,"202"s}
-	, {"46"s ,"161"s,"56"s ,"241"s}
-	, {"46"s ,"161"s,"56"s ,"203"s}
-	, {"46"s ,"161"s,"56"s ,"174"s}
-	, {"46"s ,"161"s,"56"s ,"106"s}
-	, {"46"s ,"161"s,"56"s ,"106"s}
-	, {"46"s ,"101"s,"163"s,"119"s}
-	, {"46"s ,"101"s,"127"s,"145"s}
-	, {"46"s ,"70"s ,"225"s,"39"s }
-	, {"46"s ,"70"s ,"147"s,"26"s }
-	, {"46"s ,"70"s ,"113"s,"73"s }
-	, {"46"s ,"70"s ,"29"s ,"76"s }
-	, {"46"s ,"55"s ,"46"s ,"98"s }
-	, {"46"s ,"49"s ,"43"s ,"85"s }
-	, {"39"s ,"46"s ,"86"s ,"85"s }
-	, {"5"s  ,"189"s,"203"s,"46"s }
+	  {186,204,34 ,46 }
+	, {186,46 ,222,194}
+	, {185,46 ,87 ,231}
+	, {185,46 ,86 ,132}
+	, {185,46 ,86 ,131}
+	, {185,46 ,86 ,131}
+	, {185,46 ,86 ,22 }
+	, {185,46 ,85 ,204}
+	, {185,46 ,85 ,78 }
+	, {68 ,46 ,218,208}
+	, {46 ,251,197,23 }
+	, {46 ,223,254,56 }
+	, {46 ,223,254,56 }
+	, {46 ,182,19 ,219}
+	, {46 ,161,63 ,66 }
+	, {46 ,161,61 ,51 }
+	, {46 ,161,60 ,92 }
+	, {46 ,161,60 ,35 }
+	, {46 ,161,58 ,202}
+	, {46 ,161,56 ,241}
+	, {46 ,161,56 ,203}
+	, {46 ,161,56 ,174}
+	, {46 ,161,56 ,106}
+	, {46 ,161,56 ,106}
+	, {46 ,101,163,119}
+	, {46 ,101,127,145}
+	, {46 ,70 ,225,39 }
+	, {46 ,70 ,147,26 }
+	, {46 ,70 ,113,73 }
+	, {46 ,70 ,29 ,76 }
+	, {46 ,55 ,46 ,98 }
+	, {46 ,49 ,43 ,85 }
+	, {39 ,46 ,86 ,85 }
+	, {5  ,189,203,46 }
 	});
 
     BOOST_CHECK(correct_pool == filtered_pool);
@@ -248,7 +248,7 @@ BOOST_AUTO_TEST_SUITE(test_suite_main)
       auto ip_pool = ipv4::pool_t();
 
       for(std::string line; std::getline(data, line);)
-	ip_pool.emplace_back(ipv4::split(ipv4::split(line, '\t').at(0), '.'));
+	ip_pool.emplace_back(ipv4::to_addr(ipv4::split(ipv4::split(line, '\t').at(0), '.')));
 
       const size_t counts = 1000;
       timer execution_timer;
@@ -283,7 +283,7 @@ BOOST_AUTO_TEST_SUITE(test_suite_main)
       auto ip_pool = ipv4::pool_t();
 
       for(std::string line; std::getline(data, line);)
-	ip_pool.push_back(ipv4::split(ipv4::split(line, '\t').at(0), '.'));
+	ip_pool.push_back(ipv4::to_addr(ipv4::split(ipv4::split(line, '\t').at(0), '.')));
     }
 
     double execution_time = execution_timer.stop() / counts;
@@ -304,7 +304,7 @@ BOOST_AUTO_TEST_SUITE(test_suite_main)
       auto ip_pool = ipv4::pool_t();
 
       for(std::string line; std::getline(data, line);)
-	ip_pool.emplace_back(ipv4::split(ipv4::split(line, '\t').at(0), '.'));
+	ip_pool.emplace_back(ipv4::to_addr(ipv4::split(ipv4::split(line, '\t').at(0), '.')));
     }
 
     double execution_time = execution_timer.stop() / counts;
@@ -319,7 +319,7 @@ BOOST_AUTO_TEST_SUITE(test_suite_main)
     auto ip_pool = ipv4::pool_t();
 
     for(std::string line; std::getline(data, line);)
-      ip_pool.emplace_back(ipv4::split(ipv4::split(line, '\t').at(0), '.'));
+      ip_pool.emplace_back(ipv4::to_addr(ipv4::split(ipv4::split(line, '\t').at(0), '.')));
 
     ipv4::sort(ip_pool);
 

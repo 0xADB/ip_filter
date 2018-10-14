@@ -13,7 +13,7 @@ int main(int argc, char const *argv[])
     auto ip_pool = ipv4::pool_t();;
 
     for(std::string line; std::getline(std::cin, line);)
-      ip_pool.emplace_back(ipv4::split(ipv4::split(line, '\t').at(0), '.'));
+      ip_pool.emplace_back(ipv4::to_addr(ipv4::split(ipv4::split(line, '\t').at(0), '.')));
 
     ipv4::sort(ip_pool);
     ipv4::print(std::cout, ip_pool);

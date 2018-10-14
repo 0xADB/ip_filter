@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <numeric>
+#include <limits>
 
 void ipv4::print(std::ostream& stream, const addr_t& ip_addr)
 {
@@ -9,7 +10,7 @@ void ipv4::print(std::ostream& stream, const addr_t& ip_addr)
   {
     if (ip_byte_it != ip_addr.cbegin())
       stream << '.';
-    stream << *ip_byte_it;
+    stream << std::to_string(*ip_byte_it);
   }
 }
 
@@ -34,20 +35,20 @@ void ipv4::sort(pool_t& ip_pool)
 	    , lhs.cend()
 	    , rhs.cbegin()
 	    , rhs.cend()
-	    , [](const ipv4::byte_t& lhs, const ipv4::byte_t& rhs)
-	      {
-		return (
-		  (lhs.size() < rhs.size())
-		  || (lhs.size() == rhs.size()
-		    && std::lexicographical_compare(
-			lhs.cbegin()
-			, lhs.cend()
-			, rhs.cbegin()
-			, rhs.cend()
-			)
-		    )
-		  );
-	      }
+	    // , [](const ipv4::byte_t& lhs, const ipv4::byte_t& rhs)
+	    //   {
+	    //     return (
+	    //       (lhs.size() < rhs.size())
+	    //       || (lhs.size() == rhs.size()
+	    //         && std::lexicographical_compare(
+	    //     	lhs.cbegin()
+	    //     	, lhs.cend()
+	    //     	, rhs.cbegin()
+	    //     	, rhs.cend()
+	    //     	)
+	    //         )
+	    //       );
+	    //   }
 	    );
       }
     );
@@ -61,9 +62,9 @@ ipv4::pool_t ipv4::filter_any(const pool_t& ip_pool, int byte)
       std::begin(ip_pool)
       , std::end(ip_pool)
       , std::back_inserter(filtered_pool)
-      , [byte_str = std::to_string(byte)](const addr_t& addr)
+      , [byte](const addr_t& addr)
 	{
-	  return (std::find(addr.cbegin(), addr.cend(), byte_str) != addr.cend());
+	  return (std::find(addr.cbegin(), addr.cend(), byte) != addr.cend());
 	}
       );
 
@@ -87,4 +88,29 @@ std::vector<std::string> ipv4::split(const std::string &str, char d)
   r.emplace_back(str.substr(start));
 
   return r;
+}
+
+ipv4::addr_t ipv4::to_addr(const std::vector<std::string>& addr_str)
+{
+  auto addr = addr_t(addr_str.size(), 0);
+  std::transform(
+      std::begin(addr_str)
+      , std::end(addr_str)
+      , std::begin(addr)
+      , [](const std::string& byte_str)
+	{
+	  char * end = nullptr;
+	  long byte = std::strtol(byte_str.c_str(), &end, 10);
+	  if ((errno == ERANGE)
+	    ||(end && *end != '\0')
+	    ||(byte < 0)
+	    ||(byte > static_cast<long>((std::numeric_limits<ipv4::addr_t::value_type>::max)()))
+	    )
+	  {
+	    byte = 0;
+	  }
+	  return static_cast<ipv4::addr_t::value_type>(byte);
+	}
+      );
+  return addr;
 }
