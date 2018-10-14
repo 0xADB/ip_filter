@@ -53,20 +53,21 @@ void ipv4::sort(pool_t& ip_pool)
     );
 }
 
-ipv4::pool_t ipv4::filter_any(pool_t ip_pool, int byte)
+ipv4::pool_t ipv4::filter_any(const pool_t& ip_pool, int byte)
 {
-  ip_pool.erase(
-      std::remove_if(
-	std::begin(ip_pool)
-	, std::end(ip_pool)
-	, [byte_str = std::to_string(byte)](const addr_t& addr)
-	  {
-	    return (std::find(addr.cbegin(), addr.cend(), byte_str) == addr.cend());
-	  }
-	)
+  auto filtered_pool = pool_t();
+
+  std::copy_if(
+      std::begin(ip_pool)
       , std::end(ip_pool)
+      , std::back_inserter(filtered_pool)
+      , [byte_str = std::to_string(byte)](const addr_t& addr)
+	{
+	  return (std::find(addr.cbegin(), addr.cend(), byte_str) != addr.cend());
+	}
       );
-  return ip_pool;
+
+  return filtered_pool;
 }
 
 std::vector<std::string> ipv4::split(const std::string &str, char d)

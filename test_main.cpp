@@ -80,7 +80,7 @@ BOOST_AUTO_TEST_SUITE(test_suite_main)
       auto ip_pool = ipv4::pool_t();
 
       for(std::string line; std::getline(data, line);)
-	ip_pool.push_back(ipv4::split(ipv4::split(line, '\t').at(0), '.'));
+	ip_pool.emplace_back(ipv4::split(ipv4::split(line, '\t').at(0), '.'));
 
       ipv4::sort(ip_pool);
 
@@ -133,7 +133,7 @@ BOOST_AUTO_TEST_SUITE(test_suite_main)
     auto ip_pool = ipv4::pool_t();
 
     for(std::string line; std::getline(data, line);)
-      ip_pool.push_back(ipv4::split(ipv4::split(line, '\t').at(0), '.'));
+      ip_pool.emplace_back(ipv4::split(ipv4::split(line, '\t').at(0), '.'));
 
     ipv4::sort(ip_pool);
     auto filtered_pool = ipv4::filter(ip_pool, 1);
@@ -163,7 +163,7 @@ BOOST_AUTO_TEST_SUITE(test_suite_main)
     auto ip_pool = ipv4::pool_t();
 
     for(std::string line; std::getline(data, line);)
-      ip_pool.push_back(ipv4::split(ipv4::split(line, '\t').at(0), '.'));
+      ip_pool.emplace_back(ipv4::split(ipv4::split(line, '\t').at(0), '.'));
 
     ipv4::sort(ip_pool);
     auto filtered_pool = ipv4::filter(ip_pool, 46, 70);
@@ -191,7 +191,7 @@ BOOST_AUTO_TEST_SUITE(test_suite_main)
     auto ip_pool = ipv4::pool_t();
 
     for(std::string line; std::getline(data, line);)
-      ip_pool.push_back(ipv4::split(ipv4::split(line, '\t').at(0), '.'));
+      ip_pool.emplace_back(ipv4::split(ipv4::split(line, '\t').at(0), '.'));
 
     ipv4::sort(ip_pool);
     auto filtered_pool = ipv4::filter_any(ip_pool, 46);
@@ -238,6 +238,36 @@ BOOST_AUTO_TEST_SUITE(test_suite_main)
 
 
 #ifdef IP_FILTER_BENCH
+
+  BOOST_AUTO_TEST_CASE(measure_sorting)
+  {
+    try {
+      std::ifstream data("test_data.tsv");
+      BOOST_CHECK(data.is_open());
+
+      auto ip_pool = ipv4::pool_t();
+
+      for(std::string line; std::getline(data, line);)
+	ip_pool.emplace_back(ipv4::split(ipv4::split(line, '\t').at(0), '.'));
+
+      const size_t counts = 1000;
+      timer execution_timer;
+      execution_timer.start();
+
+      for (size_t i = 0; i < counts; i++)
+      {
+	auto sorted_pool = ip_pool;
+	ipv4::sort(sorted_pool);
+      }
+
+      double execution_time = execution_timer.stop() / counts;
+      std::cout << '\n' << "measure_sorting_time: " << std::fixed << std::setprecision(0) << execution_time << '\n';
+    }
+    catch (std::exception& e)
+    {
+      std::cerr << e.what() << std::endl;
+    }
+  }
 
   BOOST_AUTO_TEST_CASE(measure_reading_with_push_back)
   {
