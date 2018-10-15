@@ -28,29 +28,7 @@ void ipv4::sort(pool_t& ip_pool)
   std::sort(
     std::begin(ip_pool)
     , std::end(ip_pool)
-    , [](const ipv4::addr_t& lhs, const ipv4::addr_t& rhs)
-      {
-	return !std::lexicographical_compare( // couldn't figure out how to apply the std::not2, sorry
-	    lhs.cbegin()
-	    , lhs.cend()
-	    , rhs.cbegin()
-	    , rhs.cend()
-	    // , [](const ipv4::byte_t& lhs, const ipv4::byte_t& rhs)
-	    //   {
-	    //     return (
-	    //       (lhs.size() < rhs.size())
-	    //       || (lhs.size() == rhs.size()
-	    //         && std::lexicographical_compare(
-	    //     	lhs.cbegin()
-	    //     	, lhs.cend()
-	    //     	, rhs.cbegin()
-	    //     	, rhs.cend()
-	    //     	)
-	    //         )
-	    //       );
-	    //   }
-	    );
-      }
+    , std::not2(std::less<addr_t>())
     );
 }
 
