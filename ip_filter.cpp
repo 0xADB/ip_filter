@@ -28,7 +28,7 @@ void ipv4::sort(pool_t& ip_pool)
   std::sort(
     std::begin(ip_pool)
     , std::end(ip_pool)
-    , std::not2(std::less<addr_t>())
+    , std::greater<addr_t>()
     );
 }
 
