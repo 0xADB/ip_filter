@@ -14,7 +14,8 @@ namespace ipv4
   using pool_t = std::vector<addr_t>;
 
   std::vector<std::string> split(const std::string &str, char d);
-  addr_t to_addr(const std::vector<std::string> &str);
+  addr_t to_addr(const std::vector<std::string> &str); //! converts vector of bytes {"xxx", "xxx", "xxx", "XXX"}
+  addr_t to_addr(const std::string& addr_str);	       //! converts address of  "xxx.xxx.xxx.xxx" format
 
   void print(std::ostream&, const pool_t&);
   void print(std::ostream& stream, const addr_t& ip_addr);

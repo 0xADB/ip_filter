@@ -80,7 +80,61 @@ BOOST_AUTO_TEST_SUITE(test_suite_main)
       auto ip_pool = ipv4::pool_t();
 
       for(std::string line; std::getline(data, line);)
-	ip_pool.emplace_back(ipv4::to_addr(ipv4::split(ipv4::split(line, '\t').at(0), '.')));
+	ip_pool.emplace_back(ipv4::to_addr(line));
+
+      ipv4::sort(ip_pool);
+
+      // 222.173.235.246
+      // 222.130.177.64
+      // 222.82.198.61
+      // ...
+      // 1.231.69.33
+      // 1.87.203.225
+      // 1.70.44.170
+      // 1.29.168.152
+      // 1.1.234.8
+
+      auto correct_head = ipv4::pool_t({
+	    {222,173,235,246}
+	  , {222,130,177,64 }
+	  , {222,82 ,198,61 }
+	  });
+
+      auto correct_tail = ipv4::pool_t({
+	    {1,231,69 ,33 }
+	  , {1,87 ,203,225}
+	  , {1,70 ,44,170}
+	  , {1,29 ,168,152}
+	  , {1,1  ,234,8  }
+	  });
+
+      BOOST_CHECK(std::equal(std::begin(correct_head), std::end(correct_head), std::begin(ip_pool)));
+
+      auto endIt = std::end(ip_pool);
+      auto addrIt = std::find_if(
+	  std::begin(ip_pool)
+	  , endIt
+	  , [byte = 1](const ipv4::addr_t& addr) {return (addr.front() == byte);}
+	  );
+      BOOST_CHECK(addrIt != endIt);
+      BOOST_CHECK(std::equal(std::begin(correct_tail), std::end(correct_tail), addrIt, endIt));
+    }
+    catch (std::exception& e)
+    {
+      std::cerr << e.what() << std::endl;
+    }
+  }
+
+  BOOST_AUTO_TEST_CASE(test_sorting_with_to_addr_with_strings)
+  {
+    try {
+      std::ifstream data("test_data.tsv");
+      BOOST_CHECK(data.is_open());
+
+      auto ip_pool = ipv4::pool_t();
+
+      for(std::string line; std::getline(data, line);)
+	ip_pool.emplace_back(ipv4::to_addr(ipv4::split(line, '\t').at(0)));
 
       ipv4::sort(ip_pool);
 
@@ -261,7 +315,7 @@ BOOST_AUTO_TEST_SUITE(test_suite_main)
       }
 
       double execution_time = execution_timer.stop() / counts;
-      std::cout << '\n' << "measure_sorting_time: " << std::fixed << std::setprecision(0) << execution_time << '\n';
+      std::cout << '\n' << std::setw(50) << "measure_sorting_time: " << std::setw(10) << std::fixed << std::setprecision(0) << execution_time << " ns\n";
     }
     catch (std::exception& e)
     {
@@ -287,7 +341,7 @@ BOOST_AUTO_TEST_SUITE(test_suite_main)
     }
 
     double execution_time = execution_timer.stop() / counts;
-    std::cout << '\n' << "measure_reading_with_push_back_time: " << std::fixed << std::setprecision(0) << execution_time << '\n';
+    std::cout << '\n' << std::setw(50) << "measure_reading_with_push_back_time: " << std::setw(10) << std::fixed << std::setprecision(0) << execution_time << " ns\n";
   }
 
   BOOST_AUTO_TEST_CASE(measure_reading_with_emplace_back)
@@ -308,7 +362,32 @@ BOOST_AUTO_TEST_SUITE(test_suite_main)
     }
 
     double execution_time = execution_timer.stop() / counts;
-    std::cout << '\n' << "measure_reading_with_emplace_back_time: " << std::fixed << std::setprecision(0) << execution_time << '\n';
+    std::cout << '\n' << std::setw(50) << "measure_reading_with_emplace_back_time: " << std::setw(10) << std::fixed << std::setprecision(0) << execution_time << " ns\n";
+  }
+
+  BOOST_AUTO_TEST_CASE(measure_reading_with_to_addr_with_strings)
+  {
+    const size_t counts = 1000;
+    timer execution_timer;
+    execution_timer.start();
+
+    for (size_t i = 0; i < counts; i++)
+    {
+      std::ifstream data("test_data.tsv");
+      BOOST_CHECK(data.is_open());
+
+      auto ip_pool = ipv4::pool_t();
+
+      for(std::string line; !data.eof();)
+      {
+	data >> line;
+	data.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+	ip_pool.emplace_back(ipv4::to_addr(line));
+      }
+    }
+
+    double execution_time = execution_timer.stop() / counts;
+    std::cout << '\n' << std::setw(50) << "measure_reading_to_addr_with_strings_time: " << std::setw(10) << std::fixed << std::setprecision(0) << execution_time << " ns\n";
   }
 
   BOOST_AUTO_TEST_CASE(measure_filter_by_two_first_bytes)
@@ -333,7 +412,7 @@ BOOST_AUTO_TEST_SUITE(test_suite_main)
     }
 
     double execution_time = execution_timer.stop() / counts;
-    std::cout << '\n' << "measure_filter_by_two_first_bytes_time: " << std::fixed << std::setprecision(0) << execution_time << '\n';
+    std::cout << '\n' << std::setw(50) << "measure_filter_by_two_first_bytes_time: " << std::setw(10) << std::fixed << std::setprecision(0) << execution_time << " ns\n";
   }
 #endif // IP_FILTER_BENCH
 
