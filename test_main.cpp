@@ -79,8 +79,12 @@ BOOST_AUTO_TEST_SUITE(test_suite_main)
 
       auto ip_pool = ipv4::pool_t();
 
-      for(std::string line; std::getline(data, line);)
+      for(std::string line; !data.eof();)
+      {
+	data >> line;
+	data.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 	ip_pool.emplace_back(ipv4::to_addr(line));
+      }
 
       ipv4::sort(ip_pool);
 
@@ -133,8 +137,12 @@ BOOST_AUTO_TEST_SUITE(test_suite_main)
 
       auto ip_pool = ipv4::pool_t();
 
-      for(std::string line; std::getline(data, line);)
-	ip_pool.emplace_back(ipv4::to_addr(ipv4::split(line, '\t').at(0)));
+      for(std::string line; !data.eof();)
+      {
+	data >> line;
+	data.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+	ip_pool.emplace_back(ipv4::to_addr(line));
+      }
 
       ipv4::sort(ip_pool);
 
@@ -186,8 +194,12 @@ BOOST_AUTO_TEST_SUITE(test_suite_main)
 
     auto ip_pool = ipv4::pool_t();
 
-    for(std::string line; std::getline(data, line);)
-      ip_pool.emplace_back(ipv4::to_addr(ipv4::split(ipv4::split(line, '\t').at(0), '.')));
+    for(std::string line; !data.eof();)
+    {
+      data >> line;
+      data.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+      ip_pool.emplace_back(ipv4::to_addr(line));
+    }
 
     ipv4::sort(ip_pool);
     auto filtered_pool = ipv4::filter(ip_pool, 1);
@@ -216,9 +228,12 @@ BOOST_AUTO_TEST_SUITE(test_suite_main)
 
     auto ip_pool = ipv4::pool_t();
 
-    for(std::string line; std::getline(data, line);)
-      ip_pool.emplace_back(ipv4::to_addr(ipv4::split(ipv4::split(line, '\t').at(0), '.')));
-
+    for(std::string line; !data.eof();)
+    {
+      data >> line;
+      data.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+      ip_pool.emplace_back(ipv4::to_addr(line));
+    }
     ipv4::sort(ip_pool);
     auto filtered_pool = ipv4::filter(ip_pool, 46, 70);
 
@@ -244,8 +259,12 @@ BOOST_AUTO_TEST_SUITE(test_suite_main)
 
     auto ip_pool = ipv4::pool_t();
 
-    for(std::string line; std::getline(data, line);)
-      ip_pool.emplace_back(ipv4::to_addr(ipv4::split(ipv4::split(line, '\t').at(0), '.')));
+    for(std::string line; !data.eof();)
+    {
+      data >> line;
+      data.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+      ip_pool.emplace_back(ipv4::to_addr(line));
+    }
 
     ipv4::sort(ip_pool);
     auto filtered_pool = ipv4::filter_any(ip_pool, 46);
@@ -301,8 +320,12 @@ BOOST_AUTO_TEST_SUITE(test_suite_main)
 
       auto ip_pool = ipv4::pool_t();
 
-      for(std::string line; std::getline(data, line);)
-	ip_pool.emplace_back(ipv4::to_addr(ipv4::split(ipv4::split(line, '\t').at(0), '.')));
+      for(std::string line; !data.eof();)
+      {
+	data >> line;
+	data.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+	ip_pool.emplace_back(ipv4::to_addr(line));
+      }
 
       const size_t counts = 1000;
       timer execution_timer;
@@ -397,8 +420,12 @@ BOOST_AUTO_TEST_SUITE(test_suite_main)
 
     auto ip_pool = ipv4::pool_t();
 
-    for(std::string line; std::getline(data, line);)
-      ip_pool.emplace_back(ipv4::to_addr(ipv4::split(ipv4::split(line, '\t').at(0), '.')));
+    for(std::string line; !data.eof();)
+    {
+      data >> line;
+      data.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+      ip_pool.emplace_back(ipv4::to_addr(line));
+    }
 
     ipv4::sort(ip_pool);
 

@@ -98,20 +98,17 @@ ipv4::addr_t ipv4::to_addr(const std::string& addr_str)
   auto addr = addr_t();
   addr.reserve(4);
   addr.push_back(0);
-  auto symIt = std::begin(addr_str);
-  auto endIt = std::end(addr_str);
-  while (symIt != endIt && !std::isspace(*symIt))
+  for (const auto& sym : addr_str)
   {
-    if (*symIt == '.')
+    if (sym == '.')
     {
       addr.push_back(0);
     }
     else
     {
       addr.back() *= 10;
-      addr.back() += static_cast<byte_t>(*symIt) - 48; // ASCII offset of '0'
+      addr.back() += static_cast<byte_t>(sym) - 48; // ASCII offset of '0'
     }
-    ++symIt;
   }
   return addr;
 }
