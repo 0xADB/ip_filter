@@ -17,7 +17,7 @@ int main(int argc, char const *argv[])
       std::cin >> line;
       if (std::cin.good())
       {
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 	ip_pool.emplace_back(ipv4::to_addr(line));
       }
     }
