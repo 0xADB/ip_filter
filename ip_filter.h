@@ -35,6 +35,7 @@ namespace ipv4
   }
 
   pool_t filter_any(const pool_t& ip_pool, int byte);
+  pool_t filter_any_seq(const pool_t& ip_pool, int byte);
 
   template<typename... Args>
   pool_t filter(const pool_t& ip_pool, Args... args)

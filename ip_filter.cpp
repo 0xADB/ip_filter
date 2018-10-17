@@ -42,6 +42,30 @@ ipv4::pool_t ipv4::filter_any(const pool_t& ip_pool, int byte)
       , std::back_inserter(filtered_pool)
       , [byte](const addr_t& addr)
 	{
+	  return std::any_of(
+	      addr.cbegin()
+	      , addr.cend()
+	      , [byte](const byte_t& addr_byte)
+		{
+		  return (addr_byte == byte);
+		}
+	      );
+	}
+      );
+
+  return filtered_pool;
+}
+
+ipv4::pool_t ipv4::filter_any_seq(const pool_t& ip_pool, int byte)
+{
+  auto filtered_pool = pool_t();
+
+  std::copy_if(
+      std::begin(ip_pool)
+      , std::end(ip_pool)
+      , std::back_inserter(filtered_pool)
+      , [byte](const addr_t& addr)
+	{
 	  return (std::find(addr.cbegin(), addr.cend(), byte) != addr.cend());
 	}
       );

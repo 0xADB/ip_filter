@@ -441,6 +441,64 @@ BOOST_AUTO_TEST_SUITE(test_suite_main)
     double execution_time = execution_timer.stop() / counts;
     std::cout << '\n' << std::setw(50) << "measure_filter_by_two_first_bytes_time: " << std::setw(10) << std::fixed << std::setprecision(0) << execution_time << " ns\n";
   }
+
+  BOOST_AUTO_TEST_CASE(measure_filter_any)
+  {
+    std::ifstream data("test_data.tsv");
+    BOOST_CHECK(data.is_open());
+
+    auto ip_pool = ipv4::pool_t();
+
+    for(std::string line; !data.eof();)
+    {
+      data >> line;
+      data.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+      ip_pool.emplace_back(ipv4::to_addr(line));
+    }
+
+    ipv4::sort(ip_pool);
+
+    const size_t counts = 1000;
+    timer execution_timer;
+    execution_timer.start();
+
+    for (size_t i = 0; i < counts; i++)
+    {
+      auto filtered_pool = ipv4::filter_any(ip_pool, 46);
+    }
+
+    double execution_time = execution_timer.stop() / counts;
+    std::cout << '\n' << std::setw(50) << "measure_filter_any_time: " << std::setw(10) << std::fixed << std::setprecision(0) << execution_time << " ns\n";
+  }
+
+  BOOST_AUTO_TEST_CASE(measure_filter_any_seq)
+  {
+    std::ifstream data("test_data.tsv");
+    BOOST_CHECK(data.is_open());
+
+    auto ip_pool = ipv4::pool_t();
+
+    for(std::string line; !data.eof();)
+    {
+      data >> line;
+      data.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+      ip_pool.emplace_back(ipv4::to_addr(line));
+    }
+
+    ipv4::sort(ip_pool);
+
+    const size_t counts = 1000;
+    timer execution_timer;
+    execution_timer.start();
+
+    for (size_t i = 0; i < counts; i++)
+    {
+      auto filtered_pool = ipv4::filter_any_seq(ip_pool, 46);
+    }
+
+    double execution_time = execution_timer.stop() / counts;
+    std::cout << '\n' << std::setw(50) << "measure_filter_any_seq_time: " << std::setw(10) << std::fixed << std::setprecision(0) << execution_time << " ns\n";
+  }
 #endif // IP_FILTER_BENCH
 
 BOOST_AUTO_TEST_SUITE_END()
