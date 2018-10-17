@@ -15,9 +15,15 @@ int main(int argc, char const *argv[])
     for(std::string line; !std::cin.eof();)
     {
       std::cin >> line;
-      std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-      ip_pool.emplace_back(ipv4::to_addr(line));
+      if (std::cin.good())
+      {
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+	ip_pool.emplace_back(ipv4::to_addr(line));
+      }
     }
+
+    // for(std::string line; std::getline(std::cin, line);)
+    //   ip_pool.emplace_back(ipv4::to_addr(ipv4::split(line, '\t').at(0)));
 
     ipv4::sort(ip_pool);
     ipv4::print(std::cout, ip_pool);
