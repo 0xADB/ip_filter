@@ -8,8 +8,8 @@ before_script:
 script:
   - cmake .
   - cmake --build . --target test_ip_filter -- VERBOSE=1
-  - cmake --build . --target test
-  - cmake --build . --target package
+  - cmake --build . --target test -- VERBOSE=1
+  - cmake --build . --target package -- VERBOSE=1
 deploy:
   provider: script
   skip_cleanup: true
