@@ -22,7 +22,7 @@ set_target_properties(ip_filter ipfilter test_ip_filter PROPERTIES
 
 set_target_properties(test_ip_filter PROPERTIES
   COMPILE_DEFINITIONS BOOST_TEST_DYN_LINK
-  INCLUDE_DIRECTORIES "${Boost_INCLUDE_DIR};${CMAKE_CURRENT_SOURCE_DIR}"
+  INCLUDE_DIRECTORIES "${Boost_INCLUDE_DIR};${CMAKE_CURRENT_SOURCE_DIR};src"
   )
   
   get_target_property(compile_incs test_ip_filter INCLUDE_DIRECTORIES)
