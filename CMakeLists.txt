@@ -7,7 +7,7 @@ find_package(Boost COMPONENTS unit_test_framework REQUIRED)
 configure_file(version.h.in autoversion.h)
 
 include_directories(
-  ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}
   )
 
 add_executable(ip_filter main.cpp)
@@ -22,8 +22,11 @@ set_target_properties(ip_filter ipfilter test_ip_filter PROPERTIES
 
 set_target_properties(test_ip_filter PROPERTIES
   COMPILE_DEFINITIONS BOOST_TEST_DYN_LINK
-  INCLUDE_DIRECTORIES "${Boost_INCLUDE_DIR};${CMAKE_CURRENT_BINARY_DIR}"
+  INCLUDE_DIRECTORIES "${Boost_INCLUDE_DIR};${CMAKE_CURRENT_SOURCE_DIR}"
   )
+  
+  get_target_property(compile_incs test_ip_filter INCLUDE_DIRECTORIES)
+  message(STATUS "includes: ${compile_incs}")
 
 if (IP_FILTER_BENCH)
   target_compile_definitions(test_ip_filter PRIVATE IP_FILTER_BENCH)
